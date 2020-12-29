@@ -150,8 +150,10 @@ In *Jump App*, Tekton supports CI/CD strategy managing new microservices' releas
 It is important to understand how a new *Jump App* microservice release works. The following list explains microservices' version details:
 
 - Each microservice has 1 version at least, named *v1*.
-- Each microservice version has a specific Deployment, Service, Route, ImageStream, BuildConfig, etc.
-- Exists a general Route which point v1 or v2, when it exists.
+- Each microservice has an imageStream and a BuildConfig.
+- Each microservice environment and version is a tag in previous imageStream (Ej: golang:jump-app-dev-v1, golang:jump-app-dev-v2, golang:jump-app-pre-v1 ...)
+- Each microservice version has a specific Deployment, Service and Route.
+- Exists a general Route which point v1, or v2 when it exists.
 - Tekton Listeners are configured to automatically integrate code commits in v1.
 - Tekton has pipelines to deploy and promote microservices' changes for the different versions.
 
@@ -162,18 +164,20 @@ It is important to understand how a new *Jump App* microservice release works. T
 When a new commit is released, a set of actions are triggered automatically depends on the repository branch:
 
 - DEVELOP
-    - Tekton Listener triggers *Deploy Pipeline*
-    - Tekton *Deploy Pipeline* downloads the new code in develop and performs the tests
-    - Tekton *Deploy Pipeline* launches buildConfig v1 in order to build a new container image for DEV environment
-    - Tekton *Deploy Pipeline* changes Deployment v1 settings to deploy the new image in DEV namespace
+    - Tekton Listener triggers *Pipeline XXXX Deploy*
+    - Tekton *Pipeline XXXX Deploy* downloads the new code in develop and performs the tests
+    - Tekton *Pipeline XXXX Deploy* launches buildConfig v1 in order to build a new container image for DEV environment
+    - Tekton *Pipeline XXXX Deploy* changes Deployment v1 settings to deploy the new image in DEV namespace
 
 - MASTER
-    - Tekton Listener triggers *Deploy and Promote Pipeline*
-    - Tekton *Deploy and Promote Pipeline* downloads the new code in master and performs the tests
-    - Tekton *Deploy and Promote Pipeline* launches buildConfig v1 in order to build a new container image for PRE environment
-    - Tekton *Deploy and Promote Pipeline* changes Deployment v1 settings to deploy the new image in PRE namespace
-    - Tekton *Deploy and Promote Pipeline* create a new buildConfig tag with production reference for PRO environment
-    - Tekton *Deploy and Promote Pipeline* changes Deployment v1 settings to deploy the new image in PRO namespace
+    - Tekton Listener triggers *Pipeline XXXX Deploy Promote*
+    - Tekton *Pipeline XXXX Deploy Promote* downloads the new code in master and performs the tests
+    - Tekton *Pipeline XXXX Deploy Promote* launches buildConfig v1 in order to build a new container image for PRE environment
+    - Tekton *Pipeline XXXX Deploy Promote* changes Deployment v1 settings to deploy the new image in PRE namespace
+    - Tekton *Pipeline XXXX Deploy Promote* create a new imageStream v1 tag with production reference for PRO environment
+    - Tekton *Pipeline XXXX Deploy Promote* changes Deployment v1 settings to deploy the new image in PRO namespace
+
+*NOTE:* Automated changes are defined to modify v1 version and it is required execute promotion pipelines to v2 manually.
 
 ## Service Mesh
 
