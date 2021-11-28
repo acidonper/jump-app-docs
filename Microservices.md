@@ -2,28 +2,23 @@
 
 As mentioned before, *Jump App* is a multi microservices application based on different programing languages. The general goal is to allow users to configure a set of jumps between *Jump App* components and generate a continuous traffic flow defining the number of retries and their span of time.
 
-As many of applications, *Jump App* is base on a frontend microservice and a set of backend microservices in order to implement the functionality in a modular architecture. The following picture shows this architecture with a simple graph:
-
-![jump-app](./images/jumpapp.png)
-
-The following sections describe this modular architecture in an overall perspective.
+As many of applications, *Jump App* is base on a frontend microservice and a set of backend microservices in order to implement the functionality in a modular architecture. The following sections describe this modular architecture from an overall perspective.
 
 ## Fronted
 
-The frontend is an application based on React which implements an interface to generate flow between the backend microservices. It also include a settings section which allows users to configure a set of microservices jumps, their sequence, the number of these jumps retries and the span of time between them.
+The frontend is an application based on React which implements an interface to generate flow between the backend microservices.
+
+This frontend includes a configuration section which allows users to configure a set of microservices jumps, their sequence, the number of these jumps retries and the span of time between them.
+
+It is also possible to enable gRPC traffic checking the respective checkbox. Using this option, the HTTP traffic is replaced by gRPC request to the backend.
+
+NOTE: It is required to deploy *Jump App* gRPC microservices in order to be able to handle this kind of traffic.
 
 ## Backends
 
-The main objective of these backend components are to implement an API path */jump* which receives a request and operate as follows:
+The main objective of the backend services is to receive a set of request with a *Jump* object which controls the sequence of jumps between the backend microservices.
 
-- GET Request - Return a JSON object with 2 fields, code and message, which includes the status request code and a custom message including the microservices technology which is handling the connection:
-
-```$json
-{
-    "code": 200,
-    "message": "/jump - Greetings from XXXXX!"
-}
-```
+With HTTP traffic, the backend components implement an API path */jump* which receives a request and operate as follows:
 
 - POST Request - Receive a JSON Object, called *Jump*, and send a request to the next *jump* based on the information included in jumps field in the object. When *jumps* field contains only one jump, a GET request is perform, if not a POST request is send deleting the respective jump (n-1):
 
@@ -34,10 +29,10 @@ $ curl -XPOST -H "Content-type: application/json" -v -d '{
     "last_path": "/jump",
     "jump_path": "/jump",
     "jumps": [
-        "http://golang:8442",
-        "http://python:8444" 
+        "http://back-golang:8442",
+        "http://back-python:8444" 
     ]
-}' 'springboot:8443/jump'  # Send a POST to SPRINGBOOT
+}' 'back-springboot:8443/jump'  # Send a POST to SPRINGBOOT
 
 ## First Jump 
 CLIENT -> SPRINGBOOT
@@ -47,26 +42,25 @@ CLIENT -> SPRINGBOOT
     "last_path": "/jump",
     "jump_path": "/jump",
     "jumps": [
-        "http://golang:8442", # Send a POST to GOLANG
-        "http://python:8444" 
+        "http://back-golang:8442", # Send a POST to GOLANG
+        "http://back-python:8444" 
     ]
 }'
 
-
 ## Second Jump
-GOLANG -> PYTHON
+SPRINGBOOT -> GOLANG
 
 '{
     "message": "Hello",
     "last_path": "/jump",
     "jump_path": "/jump",
     "jumps": [
-        "http://python:8444" # Send a GET to PYTHON
+        "http://back-python:8444" # Send a GET to PYTHON
     ]
 }'
 
-## Response
-PYTHON
+## Third Jump (RESPONSE)
+GOLANG -> PYTHON
 
 {
     "code": 200,
@@ -74,8 +68,45 @@ PYTHON
 }
 ```
 
-*NOTE*: A part of that, it is possible to find other features included SPRINGBOOT which allow users to databases.
+Regarding gRPC traffic, the backend components implement a gRPC service and operate as follows:
 
+- Jump Request - Receive a JSON Object, called *Jump*, and send a request to the next *jump* based on the information included in jumps field in the object. When *jumps* field contains only one jump, the last backend return the final response:
+
+```$bash
+
+$  grpcurl -plaintext -d '{"count": 0, "message": "hola", "jumps": ["back-golang:50051","back-python:50053"]}' back-golang:50052 jump.JumpService/Jump
+
+## First Jump 
+CLIENT -> SPRINGBOOT
+
+'{
+    "message": "hola",
+    "count": "1",
+    "jumps": [
+        "back-golang:50051",
+        "back-python:50053" 
+    ]
+}'
+
+## Second Jump
+SPRINGBOOT -> GOLANG
+
+'{
+    "message": "hola",
+    "count": "2",
+    "jumps": [
+        "back-python:50053" 
+    ]
+}'
+
+## Third Jump (RESPONSE)
+GOLANG -> PYTHON
+
+{
+    "code": 200,
+    "message": "/jump - Greetings from gRPC Python!"
+}
+```
 
 ## Author Information
 
