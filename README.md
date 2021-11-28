@@ -4,11 +4,12 @@
 
 The objectives of this multi microservices application from a technical prospective are enumerated in the following list:
 
-- Create a set of microservices in different programing languages (**Javascript**, **Java**, **Golang** and **Python**)
+- Create a set of microservices in different programing languages (**Javascript**, **Java**, **Golang**, **Python** and **Quarkus**)
 - Automate these microservices deployment in **Kubernetes** including their lifecycle management strategies:
   - Implement a GitOps solution based on **ArgoCD** and **Helm** in order to manage and automate the microservices settings changes
   - Create a CI/CD strategy based on **Tekton** in order to manage *Jump App* release lifecycle
 - Design a Service Mesh architecture based on **Istio** to manage and monitoring the traffic between *Jump App* components
+- Integrate Knative solution in order to become aware of scale to 0 application deployment benefits 
 
 In Summary, the main idea of this project is to generate a test tool to analyze microservices complex architectures networking and support multi hands-on and webinars around microservices, CI/CD, Service Mesh and so on in Kubernetes.
 
@@ -16,7 +17,7 @@ In Summary, the main idea of this project is to generate a test tool to analyze 
 
 *Jump App* was born to be deployed on Kubernetes, more specially **Red Hat Openshift Container Platform**. For this reason, it is required the following requirements:
 
-- A Red Hat Openshift Container Platform +4.5 Cluster
+- A Red Hat Openshift Container Platform +4.7 Cluster
 - Internet Access from the previous cluster
 
 ## Get Started
@@ -38,6 +39,12 @@ In Summary, the main idea of this project is to generate a test tool to analyze 
   - [jump-app-java-springboot](https://github.com/acidonper/jump-app-java-springboot)
   - [jump-app-golang](https://github.com/acidonper/jump-app-golang)
   - [jump-app-python](https://github.com/acidonper/jump-app-python)
+  - [jump-app-quarkus](https://github.com/acidonper/jump-app-quarkus)
+- Microservices gRPC
+  - [jump-app-typescrypt-react](https://github.com/acidonper/jump-app-typescrypt-react) (*Same Frontend)
+  - [jump-app-java-springboot-grpc](https://github.com/acidonper/jump-app-java-springboot-grpc)
+  - [jump-app-golang-grpc](https://github.com/acidonper/jump-app-golang-grpc)
+  - [jump-app-python-grpc](https://github.com/acidonper/jump-app-python-grpc)
 - Automation tools
   - [jump-app-gitops](https://github.com/acidonper/jump-app-gitops)
   - [jump-app-helm-charts](https://github.com/acidonper/jump-app-helm-charts)
