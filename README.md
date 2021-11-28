@@ -40,7 +40,7 @@ In Summary, the main idea of this project is to generate a test tool to analyze 
   - [jump-app-golang](https://github.com/acidonper/jump-app-golang)
   - [jump-app-python](https://github.com/acidonper/jump-app-python)
   - [jump-app-quarkus](https://github.com/acidonper/jump-app-quarkus)
- - Microservices gRPC
+- Microservices gRPC
   - [jump-app-typescrypt-react](https://github.com/acidonper/jump-app-typescrypt-react) (*Same Frontend)
   - [jump-app-java-springboot-grpc](https://github.com/acidonper/jump-app-java-springboot-grpc)
   - [jump-app-golang-grpc](https://github.com/acidonper/jump-app-golang-grpc)
